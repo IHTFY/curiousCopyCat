@@ -3,6 +3,7 @@ const fs = require('fs');
 
 let sep = "";
 function writeOut(filename, data) {
+  // Only get id, timestamp, comment(question), reply(answer), and media
   const selectData = (({ id, timestamp, comment, reply, media }) => ({ id, timestamp, comment, reply, media }))(data.post);
   fs.appendFileSync(filename, sep + JSON.stringify(selectData, null, 2), e => e ? console.error(e) : console.log(selectData.timestamp))
   if (!sep) {
@@ -15,7 +16,7 @@ async function curiousCopyCat(username) {
   const getLastTimestamp = a => a[a.length - 1].post.timestamp;
 
   async function getPosts(user, t) {
-    let url = `https://curiouscat.qa/api/v2.1/profile?username=${username}&max_timestamp=${t}`
+    let url = `https://curiouscat.qa/api/v2.1/profile?username=${user}&max_timestamp=${t}`
     const response = await fetch(url, {
       "headers": {
         "accept": "*/*",
@@ -68,4 +69,5 @@ async function curiousCopyCat(username) {
   return true;
 }
 
+// Set the username here
 curiousCopyCat('Mathoma');
