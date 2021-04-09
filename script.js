@@ -1,9 +1,13 @@
 const fetch = require('node-fetch');
 const fs = require('fs');
 
+let sep = "";
 function writeOut(filename, data) {
   const selectData = (({ id, timestamp, comment, reply, media }) => ({ id, timestamp, comment, reply, media }))(data.post);
-  fs.appendFileSync(filename, JSON.stringify(selectData, null, 2), e => e ? console.error(e) : console.log(selectData.timestamp))
+  fs.appendFileSync(filename, sep + JSON.stringify(selectData, null, 2), e => e ? console.error(e) : console.log(selectData.timestamp))
+  if (!sep) {
+    sep = ',\n';
+  }
 }
 
 async function curiousCopyCat(username) {
@@ -36,7 +40,7 @@ async function curiousCopyCat(username) {
   let data = await getPosts(username, timestamp);
 
   const fn = username + '.json';
-  fs.writeFileSync(fn, '');
+  fs.writeFileSync(fn, '[');
   data.posts.forEach(post => writeOut(fn, post));
 
   async function getNext(t) {
@@ -54,7 +58,8 @@ async function curiousCopyCat(username) {
       }
 
     } else {
-      console.log('Done.')
+      console.log('Done.');
+      fs.appendFileSync(fn, ']');
     }
   }
 
@@ -63,4 +68,4 @@ async function curiousCopyCat(username) {
   return true;
 }
 
-// curiousCopyCat('Mathoma');
+curiousCopyCat('Mathoma');
